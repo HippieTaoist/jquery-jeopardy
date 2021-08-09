@@ -80,64 +80,97 @@ async function randomCategory(headingArray) {
     return headingArray;
 }
 
+async function gotQuestion(category, value) {
+    let filteredCategoryArray = [];
+    let filteredCategoryValueArray = []
+    console.log(category, value)
+    jeopObj.forEach(object => {
+
+        if (object.category === category) {
+            filteredCategoryArray.push(object)
+        }
+    })
+    console.log('filteredCategoryArray', filteredCategoryArray)
+
+    filteredCategoryArray.forEach(object => {
+        if (object.value === value) {
+            filteredCategoryValueArray.push(object);
+        }
+    })
+    console.log('filteredCategoryValueArray', filteredCategoryValueArray)
+
+}
+
 
 async function setupJeopardyBoard() {
-    await getData()
-
-    console.log("jeoObj", jeopObj)
     jeopardyTable.append(table)
 
     table.append(thead);
     thead.append(tr)
 
-    randomCategory(jeopardyTableHeaders);
+    // get random categories and assign data to jeopObj object
+    await randomCategory(jeopardyTableHeaders);
 
-
-
+    // setup headers with random categories aquired
     jeopardyTableHeaders.forEach(heading => {
+        let count = 1;
         let th = document.createElement("th");
         th.className = "table-head-cell";
         th.innerText = heading;
-        console.log('innertext ran');
         console.log(th.innerText);
-        th.classList.add('column-' + [heading]);
+        th.classList.add('column-' + count);
         tr.append(th)
 
     });
 
-
+    // append the body group to head group
     thead.append(tbody)
 
+    // setup questions based on categories
+    // setup value to be pulled from an array that is built off of the heading category
+
     jeopardyTableHeaders.forEach(heading => {
+        let count = 1;
         let td = document.createElement("td");
         td.className = "table-data-cell";
-        td.classList.add('column-' + [heading], 'row-' + [heading]);
-        let jeopObjQuestionArray = jeopObj[heading].question.includes(heading);
+        td.classList.add('column-' + count, 'row-' + count);
+        gotQuestion(heading, '$100')
 
-        if (td.classList.contains('row-0')) {
-            td.innerText = jeopObjQuestionArray[heading].value.filter('$100')
-        }
-        if (td.classList.contains('row-1')) {
-            td.innerText = jeopObjQuestionArray[heading].value.filter('$200')
-        }
-        if (td.classList.contains('row-2')) {
-            td.innerText = jeopObjQuestionArray[heading].value.filter('$400')
-        }
-        if (td.classList.contains('row-3')) {
-            td.innerText = jeopObjQuestionArray[heading].value.filter('$600')
-        }
-        if (td.classList.contains('row-4')) {
-            td.innerText = jeopObjQuestionArray[heading].value.filter('$800')
-        }
+        // !!!! after sending, take price levels from results
+        // !!!! adjust price levels and filter out second jeopardy
+        // !!!! take remaining setup table. (have double jeapoirduy on
+        // cell that is half the value
+        // of hte double jeopardy cell)
 
-        td.innerText()
+
+
+
+        let jeopObjQuestionArray = jeopObj[count].question.includes(heading);
+
+        // if (td.classList.contains('row-0')) {
+        //     td.innerText = jeopObjQuestionArray[heading].value.filter('$100')
+        // }
+        // if (td.classList.contains('row-1')) {
+        //     td.innerText = jeopObjQuestionArray[count].value.filter('$200')
+        // }
+        // if (td.classList.contains('row-2')) {
+        //     td.innerText = jeopObjQuestionArray[heading].value.filter('$400')
+        // }
+        // if (td.classList.contains('row-3')) {
+        //     td.innerText = jeopObjQuestionArray[heading].value.filter('$600')
+        // }
+        // if (td.classList.contains('row-4')) {
+        //     td.innerText = jeopObjQuestionArray[heading].value.filter('$800')
+        // }
+
+        // td.innerText()
+        count++
     })
 
     console.log("setupJeopardyBoardRunning");
 
 
-    console.log(randomCategory(jeopardyTableHeaders))
+
 
 }
-$(document).ready(getData())
-$(getData()).ready(setupJeopardyBoard())
+$(document).ready(setupJeopardyBoard())
