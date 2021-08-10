@@ -38,6 +38,8 @@ let jeopardyTableHeaders = [
 ];
 
 let jeopObj = []
+let jeopardyRounds = []
+let dblJeoparedyRounds = []
 
 
 // setup scoreboard
@@ -49,22 +51,44 @@ async function getData() {
     const rawData = await fetch('jeopardy.json');
     const data = await rawData.json();
     jeopObj = data;
+
+    jeopardyRounds = await arrayGather('round', 'Jeopardy!')
+    dblJeopardyRounds = await arrayGather('round', 'Double Jeopardy!')
+
 }
 
 // randomizes the show to pull from.
-function randomizer() {
-    return Math.floor(Math.random() * 49377)
+function randomizer(objLength) {
+
+    return Math.floor(Math.random() * objLength)
+}
+
+// value table setup function
+function prizeValueTable() {
+
+}
+
+function arrayGather(attri, value) {
+    let tempArray = []
+    jeopObj.forEach(object => {
+        let tempObj = object[attri]
+        if (tempObj === value) {
+            tempArray.push(object);
+        }
+    })
+    console.log('arrayGather', attri, value, tempArray);
+    return tempArray;
 }
 
 // get random categories
 async function randomCategory(headingArray) {
+    let jeopardyCategoryArray = jeopObj //filter by jeapardy in catergories
 
     // assign random categories to headings
-    await getData()
     for (let heading = 0; heading < 5; heading++) {
 
         // get random category
-        let currentCategory = jeopObj[randomizer()].category;
+        let currentJeopardyCategory = jeopObj[randomizer(jeopardyCategoryArray)].category;
 
         // apply random category
         if (!headingArray.includes(currentCategory)) {
@@ -103,6 +127,7 @@ async function gotQuestion(category, value) {
 
 
 async function setupJeopardyBoard() {
+    await getData()
     jeopardyTable.append(table)
 
     table.append(thead);
